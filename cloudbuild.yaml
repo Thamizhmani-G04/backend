@@ -51,8 +51,8 @@ steps:
       - -c
       - |-
         NEW_URL=$(gcloud run services describe thamizh-backend --region=asia-south1 --format='value(status.url)')
-        echo "Testing ${NEW_URL}/"
-        curl -f "${NEW_URL}/" || { echo "Smoke test failed"; exit 1; }
+        echo "Testing $$NEW_URL/"
+        curl -f "$$NEW_URL/" || { echo "Smoke test failed"; exit 1; }
 
   # Shift all traffic to the new revision
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
