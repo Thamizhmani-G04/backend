@@ -23,7 +23,7 @@ steps:
     entrypoint: bash
     args:
       - -c
-      - |
+      - |-
         if gcloud run services describe thamizh-backend --region=asia-south1 > /dev/null 2>&1; then
           echo "Service exists, deploying with --no-traffic"
           gcloud run deploy thamizh-backend \
@@ -49,9 +49,9 @@ steps:
     entrypoint: bash
     args:
       - -c
-      - |
+      - |-
         NEW_URL=$(gcloud run services describe thamizh-backend --region=asia-south1 --format='value(status.url)')
-        echo "Testing $NEW_URL/"
+        echo "Testing ${NEW_URL}/"
         curl -f "${NEW_URL}/" || { echo "Smoke test failed"; exit 1; }
 
   # Shift all traffic to the new revision
