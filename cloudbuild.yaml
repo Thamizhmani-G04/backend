@@ -1,122 +1,65 @@
 steps:
-
-  # Build Docker image tagged with commit SHA
-
+  # Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
-
     args:
-
       [
-
         'build',
-
         '-t',
-
         'asia-south1-docker.pkg.dev/${PROJECT_ID}/thamizh-repository/backend:latest',
-
         '.'
-
       ]
- 
+
   # Push image to Artifact Registry
-
   - name: 'gcr.io/cloud-builders/docker'
-
     args:
-
       [
-
         'push',
-
         'asia-south1-docker.pkg.dev/${PROJECT_ID}/thamizh-repository/backend:latest'
-
       ]
- 
-  # Deploy without traffic, configure Cloud Run to listen on port 8080
 
+  # Deploy (without --no-traffic)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-
-    id: Deploy-No-Traffic
-
+    id: Deploy
     entrypoint: gcloud
-
     args:
-
       [
-
         'run',
-
         'deploy',
-
         'thamizh-backend',
-
         '--image',
-
         'asia-south1-docker.pkg.dev/${PROJECT_ID}/thamizh-repository/backend:latest',
-
         '--platform',
-
         'managed',
-
         '--region',
-
         'asia-south1',
-
         '--allow-unauthenticated',
-
-        '--port=8080',
-
-        '--no-traffic'
-
+        '--port=8080'
       ]
- 
-  # Smoke test the new deployment (check root path)
 
+  # Smoke test the new deployment
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-
     id: Smoke-Test
-
     entrypoint: bash
-
     args:
-
       - -c
-
       - |
-
         NEW_URL=$(gcloud run services describe thamizh-backend --region=asia-south1 --format='value(status.url)')
+        echo "Testing $NEW_URL/"
+        curl -f "$NEW_URL/" || { echo "Smoke test failed"; exit 1; }
 
-        echo "Testing $$NEW_URL/"
-
-        curl -f "$$NEW_URL/" || { echo "Smoke test failed"; exit 1; }
- 
-  # Shift all traffic to the new revision
-
+  # Shift traffic to new revision (optional, since traffic is already assigned)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-
     id: Shift-Traffic
-
     entrypoint: gcloud
-
     args:
-
       [
-
         'run',
-
         'services',
-
         'update-traffic',
-
         'thamizh-backend',
-
         '--to-latest',
-
         '--region=asia-south1'
-
       ]
- 
-options:
 
+options:
   logging: CLOUD_LOGGING_ONLY
- 
