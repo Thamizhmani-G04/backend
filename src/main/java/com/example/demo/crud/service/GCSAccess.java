@@ -15,8 +15,8 @@ import com.google.cloud.storage.StorageOptions;
 public class GCSAccess {
 
 	private static final Logger logger = LoggerFactory.getLogger(GCSAccess.class);
-//	private Storage storage = StorageOptions.getDefaultInstance().getService();
-	private Storage storage;
+ 	private Storage storage = StorageOptions.getDefaultInstance().getService();
+//	private Storage storage;
 	
 	@Value("${gcp.bucket.name}")
     private String bucketName;
@@ -37,7 +37,7 @@ public class GCSAccess {
 
 	public String GCSSaveFile(String type, MultipartFile multipartFile) {
 		try {
-			initStorage();
+//			initStorage();
 			if (multipartFile == null) {
 				logger.warn("No file uploaded for type: {}", type);
 				return null;
