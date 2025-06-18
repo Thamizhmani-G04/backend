@@ -17,15 +17,15 @@ steps:
         'asia-south1-docker.pkg.dev/${PROJECT_ID}/thamizh-repository/backend:latest'
       ]
 
-  # Deploy (use --no-traffic only if the service already exists)
+  # Deploy with conditional --no-traffic
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: Deploy
     entrypoint: bash
     args:
       - -c
       - |
-        if gcloud run services describe thamizh-backend --region=asia-south1 >/dev/null 2>&1; then
-          echo "Service exists – deploying with --no-traffic"
+        if gcloud run services describe thamizh-backend --region=asia-south1 > /dev/null 2>&1; then
+          echo "Service exists, deploying with --no-traffic"
           gcloud run deploy thamizh-backend \
             --image=asia-south1-docker.pkg.dev/${PROJECT_ID}/thamizh-repository/backend:latest \
             --platform=managed \
@@ -34,7 +34,7 @@ steps:
             --port=8080 \
             --no-traffic
         else
-          echo "Service does not exist – deploying without --no-traffic"
+          echo "Service does not exist, deploying without --no-traffic"
           gcloud run deploy thamizh-backend \
             --image=asia-south1-docker.pkg.dev/${PROJECT_ID}/thamizh-repository/backend:latest \
             --platform=managed \
@@ -43,18 +43,18 @@ steps:
             --port=8080
         fi
 
-  # Smoke‑test the newly deployed revision
+  # Smoke test the new deployment
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: Smoke-Test
     entrypoint: bash
     args:
       - -c
       - |
-        NEW_URL=$$(gcloud run services describe thamizh-backend --region=asia-south1 --format='value(status.url)')
-        echo "Testing $$NEW_URL/"
-        curl -f "$$NEW_URL/" || { echo "Smoke test failed"; exit 1; }
+        NEW_URL=$(gcloud run services describe thamizh-backend --region=asia-south1 --format='value(status.url)')
+        echo "Testing $NEW_URL/"
+        curl -f "$NEW_URL/" || { echo "Smoke test failed"; exit 1; }
 
-  # Shift all traffic to the latest revision
+  # Shift all traffic to the new revision
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: Shift-Traffic
     entrypoint: gcloud
