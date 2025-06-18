@@ -30,6 +30,8 @@ steps:
             --image=asia-south1-docker.pkg.dev/${PROJECT_ID}/thamizh-repository/backend:latest \
             --platform=managed \
             --region=asia-south1 \
+            --vpc-connector=my-connector \
+            --set-env-vars="INSTANCE_CONNECTION_NAME=striped-proxy-462506-j3:asia-south1:my-postgres-instance" \
             --allow-unauthenticated \
             --service-account=testing04@striped-proxy-462506-j3.iam.gserviceaccount.com \
             --port=8080 \
@@ -40,8 +42,10 @@ steps:
             --image=asia-south1-docker.pkg.dev/${PROJECT_ID}/thamizh-repository/backend:latest \
             --platform=managed \
             --region=asia-south1 \
+            --vpc-connector=my-connector \
             --allow-unauthenticated \
             --service-account=testing04@striped-proxy-462506-j3.iam.gserviceaccount.com \
+            --set-env-vars="INSTANCE_CONNECTION_NAME=striped-proxy-462506-j3:asia-south1:my-postgres-instance" \
             --port=8080
         fi
 
