@@ -30,7 +30,7 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	@GetMapping("/api/users")
+	@GetMapping("/users")
 	public List<UserDetails> getAllUsers() {
 		return userService.getAllUsers();
 
@@ -41,22 +41,22 @@ public class UserController {
 		return "Hello";
 	}
 
-	@GetMapping("/api/users/{id}")
+	@GetMapping("/users/{id}")
 	public UserDetails getUser(@PathVariable Long id) {
 		return userService.getUserById(id);
 	}
 
-	@PostMapping(value = "/api/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(value = "/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public UserDetails createUserDetails(@ModelAttribute UserDetailsModel user) {
 		return userService.createUserDetails(user);
 	}
 
-	@PutMapping("/api/users/{id}")
+	@PutMapping("/users/{id}")
 	public UserDetails updateUserDetails(@PathVariable Long id, @RequestBody UserDetails userDetails) {
 		return userService.updateUserDetails(id, userDetails);
 	}
 
-	@DeleteMapping("/api/users/{id}")
+	@DeleteMapping("/users/{id}")
 	public void deleteUserDetails(@PathVariable Long id) {
 		userService.deleteUserDetails(id);
 	}
