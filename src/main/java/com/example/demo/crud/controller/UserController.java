@@ -1,6 +1,9 @@
 package com.example.demo.crud.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.crud.model.UserDetailsModel;
@@ -30,10 +34,17 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	@GetMapping("/users")
+	@GetMapping("/api/users")
 	public List<UserDetails> getAllUsers() {
 		return userService.getAllUsers();
 
+	}
+	
+	@PostMapping("/api/name")
+	public Map<String, String> cloudRun(@RequestParam String name) {
+	    Map<String, String> response = new HashMap<>();
+	    response.put("message", "Welcome, " + name);
+	    return response;
 	}
 
 	@GetMapping("/healthCheck")
@@ -41,22 +52,22 @@ public class UserController {
 		return "Hello";
 	}
 
-	@GetMapping("/users/{id}")
+	@GetMapping("/api/users/{id}")
 	public UserDetails getUser(@PathVariable Long id) {
 		return userService.getUserById(id);
 	}
 
-	@PostMapping(value = "/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(value = "/api/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public UserDetails createUserDetails(@ModelAttribute UserDetailsModel user) {
 		return userService.createUserDetails(user);
 	}
 
-	@PutMapping("/users/{id}")
+	@PutMapping("/api/users/{id}")
 	public UserDetails updateUserDetails(@PathVariable Long id, @RequestBody UserDetails userDetails) {
 		return userService.updateUserDetails(id, userDetails);
 	}
 
-	@DeleteMapping("/users/{id}")
+	@DeleteMapping("/api/users/{id}")
 	public void deleteUserDetails(@PathVariable Long id) {
 		userService.deleteUserDetails(id);
 	}
